@@ -2,12 +2,21 @@ import React from 'react'
 import { useState } from 'react';
 import { ethers } from 'ethers';
 import { createWeb3Modal, defaultConfig } from "@web3modal/ethers5/react";
-
+import { Link } from "react-router-dom";
+//import { IDKitWidget } from "@worldcoin/idkit";
+//import { ISuccessResult, CredentialType } from "@worldcoin/idkit";
+import { BigNumber } from "ethers";
+//import { decode } from "./wld.ts";
+import { IDKitWidget, ISuccessResult, useIDKit } from "@worldcoin/idkit";
+// import {
+//   useAccount,
+//   useWriteContract,
+//   useWaitForTransactionReceipt,
+//   type BaseError,
+// } from "wagmi";
+// import { decodeAbiParameters, parseAbiParameters } from "viem";
 
 const Navbar = () => {
-  
-
-
 // 1. Get projectId
 const projectId = "dbe843c72438dc8cab711ae11e6876fc";
 
@@ -19,6 +28,14 @@ const mainnet = {
   explorerUrl: "https://etherscan.io",
   rpcUrl: "https://cloudflare-eth.com",
 };
+
+const mantle = {
+    chainId: 5003,
+  name: "Mantle",
+  currency: "MNT",
+//   explorerUrl: "https://etherscan.io",
+  rpcUrl: "https://rpc.sepolia.mantle.xyz",
+}
 
 // 3. Create a metadata object
 const metadata = {
@@ -44,61 +61,155 @@ const ethersConfig = defaultConfig({
 // 5. Create a Web3Modal instance
 createWeb3Modal({
   ethersConfig,
-  chains: [mainnet],
+  chains: [mainnet, mantle],
   projectId,
   enableAnalytics: true, // Optional - defaults to your Cloud configuration
 });
 
-  return (
-    <div className="navbar bg-base-100">
-      <div className="navbar-start">
-        <div className="dropdown">
-          <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h8m-8 6h16"
-              />
-            </svg>
-          </div>
-          <ul
-            tabIndex={0}
-            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
-          >
-            <li>
-              <a>Events</a>
-            </li>
+const abi = [
+  {
+    inputs: [
+      {
+        internalType: "contract IWorldID",
+        name: "_worldId",
+        type: "address",
+      },
+      {
+        internalType: "string",
+        name: "_appId",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "_actionId",
+        type: "string",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "constructor",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "nullifierHash",
+        type: "uint256",
+      },
+    ],
+    name: "DuplicateNullifier",
+    type: "error",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "nullifierHash",
+        type: "uint256",
+      },
+    ],
+    name: "Verified",
+    type: "event",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "signal",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "root",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "nullifierHash",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256[8]",
+        name: "proof",
+        type: "uint256[8]",
+      },
+    ],
+    name: "verifyAndExecute",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+];
 
-            <li>
-              <a>Restricted Events</a>
-            </li>
-          </ul>
+// const address = "0x469449f251692E0779667583026b5A1E99512157";
+
+// const account = useAccount()
+// 	const { setOpen } = useIDKit()
+// 	const [done, setDone] = useState(false)
+// 	const { data: hash, isPending, error, writeContractAsync } = useWriteContract()
+// 	const { isLoading: isConfirming, isSuccess: isConfirmed } = 
+// 		useWaitForTransactionReceipt({
+// 			hash,
+// 		}) 
+
+// 	const submitTx = async (proof: ISuccessResult) => {
+// 		try {
+// 			await writeContractAsync({
+// 				address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as `0x${string}`,
+// 				account: account.address!,
+// 				abi,
+// 				functionName: 'verifyAndExecute',
+// 				args: [
+// 					account.address!,
+// 					BigInt(proof!.merkle_root),
+// 					BigInt(proof!.nullifier_hash),
+// 					decodeAbiParameters(
+// 						parseAbiParameters('uint256[8]'),
+// 						proof!.proof as `0x${string}`
+// 					)[0],
+// 				],
+// 			})
+// 			setDone(true)
+// 		} catch (error) {throw new Error((error as BaseError).shortMessage)}
+// 	}
+
+
+  return (
+    <>
+      <div className="navbar bg-base-100">
+        <div className="navbar-start">
+          <a className="btn btn-ghost text-xl">zKeveKom</a>
         </div>
-        <a className="btn btn-ghost text-xl">zKeveKom</a>
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
           <li>
-            <a>Events</a>
+            <Link to="/community">Events</Link>
           </li>
           <li>
-            <a>Restricted Events</a>
+            <Link to="/restricted">Entry Gated Events</Link>
+          </li>
+          <li>
+            <Link to="/my">My Events</Link>
           </li>
         </ul>
       </div>
-      <div className="navbar-end">
+      {/* {!hideWorldCoin && wld} */}
+      <IDKitWidget
+        app_id="app_staging_66f83164bd5e69e75546612dc02179f7" // obtained from the Developer Portal
+        action="vote" // this is your action name from the Developer Portal
+        signal="user_value" // any arbitrary value the user is committing to, e.g. a vote
+        //onSuccess={onSuccess}
+        verification_level="device" // minimum verification level accepted, defaults to "orb"
+      >
+        {({ open }) => <button onClick={open}>Verify with World ID</button>}
+      </IDKitWidget>
+      <div>
         <w3m-button />
       </div>
-    </div>
+    </>
   );
 }
-
 export default Navbar
+

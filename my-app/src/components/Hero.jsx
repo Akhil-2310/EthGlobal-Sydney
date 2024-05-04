@@ -9,11 +9,9 @@ const Hero = () => {
           className="max-w-sm rounded-lg shadow-2xl"
         />
         <div>
-          <h1 className="text-5xl font-bold">Box Office News!</h1>
+          <h1 className="text-5xl font-bold">To the community, for the community, by the community</h1>
           <p className="py-6">
-            Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda
-            excepturi exercitationem quasi. In deleniti eaque aut repudiandae et
-            a id nisi.
+            Create events, meet people, build products, have fun!
           </p>
           <button className="btn btn-primary">Get Started</button>
         </div>
